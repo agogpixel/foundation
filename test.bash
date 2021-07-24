@@ -33,7 +33,7 @@ foundation_smoke_test_root_no_daemon() {
 
     for cmd in "${cmds[@]}"; do
         printf "Testing '%s'...\n" "${cmd}"
-        docker run -it --rm "${IMAGE}" ${cmd}
+        docker run --rm "${IMAGE}" ${cmd}
         printf '%s ok.\n' "${cmd}"
     done
 
@@ -47,7 +47,7 @@ foundation_smoke_test_non_root_no_daemon() {
 
     for cmd in "${cmds[@]}"; do
         printf "Testing '%s'...\n" "${cmd}"
-        docker run -it --rm --user non-root "${IMAGE}" ${cmd}
+        docker run --rm --user non-root "${IMAGE}" ${cmd}
         printf '%s ok.\n' "${cmd}"
     done
 
