@@ -1,13 +1,10 @@
-name: Build & Test
+name: Build, Test, & Push
 on:
-  pull_request:
-    branches:
-      - '**'
   push:
-    branches-ignore:
+    branches:
       - main
 jobs:
-  Build-And-Test:
+  Build-Test-And-Test:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: agogpixel/foundation
@@ -18,7 +15,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Docker Login
         run: echo todo...
-      - name: Build
+      - name: Build RC
         run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --no-cache --pull ${BAKE_TARGETS}
-      - name: Test
+      - name: Test RC
         run: for TAG in ${TEST_TAGS}; do IMAGE="${IMAGE_NAME}:${TAG}" bash test.bash; done
+      - name: Build & Push
+        run: echo todo...
