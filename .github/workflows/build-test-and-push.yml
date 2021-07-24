@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Docker Login
-        run: echo todo...
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Build RC
         run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --no-cache --pull ${BAKE_TARGETS}
       - name: Test RC
         run: for TAG in ${TEST_TAGS}; do IMAGE="${IMAGE_NAME}:${TAG}" bash test.bash; done
       - name: Build & Push
-        run: echo todo...
+        run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --push ${BAKE_TARGETS}
