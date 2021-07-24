@@ -204,7 +204,7 @@ EOF
 
     sed -i 's/module(load="imklog")/#module(load="imklog")/' /etc/rsyslog.conf
 
-    sed -i "s?/etc/init.d/rsyslog --ifstarted reload >/dev/null?kill -HUP $(cat /var/run/rsyslogd.pid) \&> /dev/null?" /etc/logrotate.d/rsyslog
+    sed -i "s?/etc/init.d/rsyslog --ifstarted reload >/dev/null?kill -HUP \$(cat /var/run/rsyslogd.pid) \&> /dev/null?" /etc/logrotate.d/rsyslog
 }
 
 foundation_install_setup_logrotate() {
