@@ -1,0 +1,22 @@
+name: Build & Test
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches-ignore:
+      - main
+jobs:
+  Build-And-Test:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: agogpixel/foundation
+      BAKE_TARGETS: 3.14 3.13 3.12 3.11 edge
+      TEST_TAGS: 3.14 3.13 3.12 3.11 edge
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --no-cache --pull ${BAKE_TARGETS}
+      - name: Test
+        run: for TAG in ${TEST_TAGS}; do IMAGE="${IMAGE_NAME}:${TAG}" bash test.bash; done

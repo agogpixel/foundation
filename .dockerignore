@@ -1,0 +1,7 @@
+.github/
+.dockerignore
+.editorconfig
+docker-bake.hcl
+Dockerfile
+README.md
+test.bash
