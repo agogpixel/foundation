@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  Build-Test-And-Test:
+  Build-Test-And-Push:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: agogpixel/foundation
