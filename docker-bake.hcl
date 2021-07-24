@@ -17,7 +17,6 @@ target "3.14" {
     alpine_version = "3.14"
   }
   tags = [
-    notequal("",IMAGE_TAG) ? "${IMAGE_NAME}:${IMAGE_TAG}" : "",
     notequal("",IMAGE_TAG) ? "${IMAGE_NAME}:${IMAGE_TAG}-3.14" : "",
     "${IMAGE_NAME}:3.14",
     "${IMAGE_NAME}:latest"
