@@ -18,6 +18,6 @@ jobs:
       - name: Build RC
         run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --no-cache --pull ${BAKE_TARGETS}
       - name: Test RC
-        run: for TAG in ${TEST_TAGS}; do IMAGE="${IMAGE_NAME}:${TAG}" bash test.bash; done
+        run: for TAG in ${TEST_TAGS}; do bash test.bash "${IMAGE_NAME}:${TAG}"; done
       - name: Build & Push
         run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --push ${BAKE_TARGETS}

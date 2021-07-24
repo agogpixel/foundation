@@ -41,6 +41,7 @@ readonly FOUNDATION_INSTALL_ENTRYPOINTD_PATH=/usr/local/share/entrypoint.d
 readonly FOUNDATION_INSTALL_RUN_CONTAINER_PATH=/usr/local/bin/run-container.sh
 
 foundation_install_main() {
+    foundation_install_print_header
     foundation_install_install_packages
     foundation_install_create_user
     foundation_install_add_user_to_sudoers
