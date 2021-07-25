@@ -18,10 +18,15 @@ Images built via [docker buildx bake](https://docs.docker.com/engine/reference/c
 
 ### Arguments
 
-- `alpine_version`: Alpine version [tag](https://hub.docker.com/_/alpine?tab=tags&page=1&ordering=last_updated).
+- `alpine_version`: Alpine version [tag](https://hub.docker.com/_/alpine?tab=tags&page=1&ordering=last_updated) (default: `latest`).
 - `username`: Non-root user username (with [sudo](https://man7.org/linux/man-pages/man8/sudo.8.html) access) (default: `non-root`).
 - `uid`: Non-root user ID (default: `1000`).
 - `gid`: Non-root user group ID (default: `1000`).
+- `entrypoint_path`: Path to entrypoint executable (default: `/usr/local/bin/entrypoint.sh`).
+- `entrypointd_path`: Path to entrypoint script directory (default: `/usr/local/share/entrypoint.d`).
+- `run_container_path`: Path to run container executable (default: `/usr/local/bin/run-container.sh`).
+- `runit_path`: Path to runit configuration directory (default: `/etc/runit`).
+- `service_path`: Path to service directory (default: `/etc/service`).
 
 ## Test
 
@@ -33,14 +38,27 @@ bash test.sh agogpixel/foundation:<tag>
 
 ## Extend
 
-Important filesystem paths and order of execution:
+Important environment variables:
 
-1. `/usr/local/bin/entrypoint.sh`: Determine if container is running as a daemon, and sources the contents of `/usr/local/share/entrypoint.d/*.sh`.
-2. `/usr/local/share/entrypoint.d/`: Additional entrypoint scripts that reside here will be sourced by the shell.
-3. `/usr/local/bin/run-container.sh`: Executed via [tini](https://github.com/krallin/tini) (which is PID 1) when container running as a daemon. Starts `runit` init system lifecycle.
-4. `/etc/runit/init.d/`: One time initialization executables located here are executed as part of the `runit` _booting_ stage (stage 1).
-5. `/etc/service/`: Location of the collection of services managed during the `runit` _running_ stage (stage 2).
-6. `/etc/runit/term.d/`: One time termination executables located here are executed as part of the `runit` _shutting down_ stage (stage 3).
+- `FOUNDATION_ALPINE_VERSION`: Alpine version (set by `alpine_version` build arg).
+- `FOUNDATION_USERNAME`: Non-root user username (set by `username` build arg).
+- `FOUNDATION_UID`: Non-root user ID (set by `uid` build arg).
+- `FOUNDATION_GID`: Non-root user group ID (set by `gid` build arg).
+- `FOUNDATION_ENTRYPOINT_PATH`: Path to entrypoint executable (set by `entrypoint_path` build arg).
+- `FOUNDATION_ENTRYPOINTD_PATH`: Path to entrypoint script directory (set by `entrypointd_path` build arg).
+- `FOUNDATION_RUN_CONTAINER_PATH`: Path to run container executable (set by `run_container_path` build arg).
+- `FOUNDATION_RUNIT_PATH`: Path to runit configuration directory (set by `runit_path` build arg).
+- `FOUNDATION_RUNIT_INITD_PATH`: Path to runit initialization directory (set by `runit_path` build arg).
+- `FOUNDATION_RUNIT_TERMD_PATH`: Path to runit termination directory (set by `runit_path` build arg).
+- `FOUNDATION_SERVICE_PATH`: Path to service directory (set by `service_path` build arg).
+
+Order of execution:
+
+1. `FOUNDATION_ENTRYPOINT_PATH`: Determine if container is running as a daemon and sources the contents of `${FOUNDATION_ENTRYPOINTD_PATH}/*.sh`.
+2. `FOUNDATION_RUN_CONTAINER_PATH`: Executed via [tini](https://github.com/krallin/tini) (which is PID 1) when container running as a daemon. Starts `runit` init system lifecycle.
+3. `FOUNDATION_RUNIT_INITD_PATH`: One time initialization executables located here are executed as part of the `runit` _booting_ stage (stage 1).
+4. `FOUNDATION_SERVICE_PATH`: Services started & managed during the `runit` _running_ stage (stage 2).
+5. `FOUNDATION_RUNIT_TERMD_PATH`: One time termination executables located here are executed as part of the `runit` _shutting down_ stage (stage 3).
 
 ### Services
 
@@ -61,7 +79,7 @@ EOF
 
 chmod +x /etc/sv/exampled/run
 
-ln -s /etc/sv/exampled /etc/service/exampled
+ln -s /etc/sv/exampled "${FOUNDATION_SERVICE_PATH}"/exampled
 
 # finish is optional.
 cat >/etc/sv/exampled/finish <<-EOF
