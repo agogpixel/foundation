@@ -31,14 +31,15 @@ readonly FOUNDATION_INSTALL_ALPINE_VERSION="${1}"
 readonly FOUNDATION_INSTALL_USERNAME="${2:-"non-root"}"
 readonly FOUNDATION_INSTALL_UID="${3:-"1000"}"
 readonly FOUNDATION_INSTALL_GID="${4:-"1000"}"
+readonly FOUNDATION_INSTALL_ENTRYPOINT_PATH="${5:-"/usr/local/bin/entrypoint.sh"}"
+readonly FOUNDATION_INSTALL_ENTRYPOINTD_PATH="${6:-"/usr/local/share/entrypoint.d"}"
+readonly FOUNDATION_INSTALL_RUN_CONTAINER_PATH="${7:-"/usr/local/bin/run-container.sh"}"
+readonly FOUNDATION_INSTALL_RUNIT_PATH="${8:-"/etc/runit"}"
+readonly FOUNDATION_INSTALL_RUNIT_INITD_PATH="${9:-"/etc/runit/init.d"}"
+readonly FOUNDATION_INSTALL_RUNIT_TERMD_PATH="${10:-"/etc/runit/term.d"}"
+readonly FOUNDATION_INSTALL_SERVICE_PATH="${11:-"/etc/service"}"
 
 readonly FOUNDATION_INSTALL_PACKAGES='ca-certificates logrotate procps runit rsyslog sudo tini'
-readonly FOUNDATION_INSTALL_RUNIT_PATH=/etc/runit
-readonly FOUNDATION_INSTALL_RUNIT_INITD_PATH="${FOUNDATION_INSTALL_RUNIT_PATH}"/init.d
-readonly FOUNDATION_INSTALL_RUNIT_TERMD_PATH="${FOUNDATION_INSTALL_RUNIT_PATH}"/term.d
-readonly FOUNDATION_INSTALL_ENTRYPOINT_PATH=/usr/local/bin/entrypoint.sh
-readonly FOUNDATION_INSTALL_ENTRYPOINTD_PATH=/usr/local/share/entrypoint.d
-readonly FOUNDATION_INSTALL_RUN_CONTAINER_PATH=/usr/local/bin/run-container.sh
 
 foundation_install_main() {
     foundation_install_print_header
@@ -183,7 +184,7 @@ exec /usr/sbin/crond -f
 EOF
 
     chmod +x "${sv_run_path}"
-    ln -s "${sv_path}" /etc/service/crond
+    ln -s "${sv_path}" "${FOUNDATION_INSTALL_SERVICE_PATH}"/crond
 }
 
 foundation_install_setup_rsyslog() {
@@ -201,7 +202,7 @@ exec /usr/sbin/rsyslogd -n
 EOF
 
     chmod +x "${sv_run_path}"
-    ln -s "${sv_path}" /etc/service/rsyslogd
+    ln -s "${sv_path}" "${FOUNDATION_INSTALL_SERVICE_PATH}"/rsyslogd
 
     sed -i 's/module(load="imklog")/#module(load="imklog")/' /etc/rsyslog.conf
     sed -i "s?/etc/init.d/rsyslog --ifstarted reload >/dev/null?kill -HUP \\\$(cat /var/run/rsyslogd.pid) \&> /dev/null?" /etc/logrotate.d/rsyslog
@@ -367,7 +368,7 @@ set -o nounset
 
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-exec env - PATH=\${PATH} /sbin/runsvdir -P /etc/service
+exec env - PATH=\${PATH} /sbin/runsvdir -P "${FOUNDATION_INSTALL_SERVICE_PATH}"
 EOF
 }
 
@@ -400,14 +401,14 @@ LAST=0
 test -x ${FOUNDATION_INSTALL_RUNIT_PATH}/reboot && LAST=6
 
 # Stop every services : http://smarden.org/runit/sv.8.html
-if [ -n "\$(ls -A /etc/service)" ]; then
+if [ -n "\$(ls -A "${FOUNDATION_INSTALL_SERVICE_PATH}")" ]; then
     # First try to stop services by the reverse order.
-    for srv in \$(ls -r1 /etc/service); do
+    for srv in \$(ls -r1 "${FOUNDATION_INSTALL_SERVICE_PATH}"); do
         sudo_if sv -w196 force-stop "\${srv}" 2>/dev/null
     done
 
     # Then force stop all service if any remains.
-    sudo_if sv -w196 force-stop /etc/service/* 2>/dev/null
+    sudo_if sv -w196 force-stop "${FOUNDATION_INSTALL_SERVICE_PATH}"/* 2>/dev/null
 fi
 
 # Run every scripts in ${FOUNDATION_INSTALL_RUNIT_TERMD_PATH}
