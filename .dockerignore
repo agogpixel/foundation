@@ -5,4 +5,4 @@ docker-bake.hcl
 Dockerfile
 LICENSE
 README.md
-test.bash
+test.sh
