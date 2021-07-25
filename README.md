@@ -38,9 +38,9 @@ Important filesystem paths and order of execution:
 1. `/usr/local/bin/entrypoint.sh`: Determine if container is running as a daemon, and sources the contents of `/usr/local/share/entrypoint.d/*.sh`.
 2. `/usr/local/share/entrypoint.d/`: Additional entrypoint scripts that reside here will be sourced by the shell.
 3. `/usr/local/bin/run-container.sh`: Executed via [tini](https://github.com/krallin/tini) (which is PID 1) when container running as a daemon. Starts `runit` init system lifecycle.
-4. `/etc/runit/init.d/`: One time initialization executables located here are executed as part of the `runit` 'booting' stage (stage 1).
-5. `/etc/service/`: Location of the collection of services managed during the `runit` 'running' stage (stage 2).
-6. `/etc/runit/term.d/`: One time termination executables located here are executed as part of the `runit` 'shutting down' stage (stage 3).
+4. `/etc/runit/init.d/`: One time initialization executables located here are executed as part of the `runit` _booting_ stage (stage 1).
+5. `/etc/service/`: Location of the collection of services managed during the `runit` _running_ stage (stage 2).
+6. `/etc/runit/term.d/`: One time termination executables located here are executed as part of the `runit` _shutting down_ stage (stage 3).
 
 ### Services
 
@@ -75,7 +75,9 @@ chmod +x /etc/sv/exampled/finish
 
 ### Logging
 
-TODO
+Additional configuration files for logging with `rsyslog` can be added to `/etc/rsyslog.d/`.
+
+Corresponding log rotation configuration files can be added to `/etc/logrotate.d/`.
 
 ## Contributing
 
