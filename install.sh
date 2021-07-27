@@ -115,8 +115,6 @@ PS1="\$PS1\\$(parse_git_branch)" # current git branch
 PS1="\$PS1"'\\[\\033[0m\\]'     # change color
 PS1="\$PS1"'\\n'                # new line
 PS1="\$PS1"'\\$ '               # prompt<space>
-
-unset parse_git_branch
 EOF
     )"
 
