@@ -1,8 +1,13 @@
 name: Build, Test, & Push
 on:
+  schedule:
+    - cron: 0 0 * * *
   push:
     branches:
       - main
+  workflow_dispatch:
+    types:
+      - build-test-and-push
 jobs:
   Build-Test-And-Push:
     runs-on: ubuntu-latest
@@ -10,6 +15,8 @@ jobs:
       IMAGE_NAME: agogpixel/foundation
       BAKE_TARGETS: 3.14 3.13 3.12 3.11 edge
       TEST_TAGS: 3.14 3.13 3.12 3.11 edge
+      DOWNSTREAM_REPOS: agogpixel/foundation-dfromd
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,3 +28,5 @@ jobs:
         run: for TAG in ${TEST_TAGS}; do bash test.sh "${IMAGE_NAME}:${TAG}"; done
       - name: Build & Push
         run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --push ${BAKE_TARGETS}
+      - name: Trigger Downstream Builds
+        run: for REPO in ${DOWNSTREAM_REPOS}; do gh api repos/${REPO}/dispatches --raw-field event_type=build-test-and-push
