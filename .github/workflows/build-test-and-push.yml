@@ -29,4 +29,4 @@ jobs:
       - name: Build & Push
         run: IMAGE_NAME="${IMAGE_NAME}" IMAGE_TAG="$(git rev-parse --short HEAD)" docker buildx bake --push ${BAKE_TARGETS}
       - name: Trigger Downstream Builds
-        run: for REPO in ${DOWNSTREAM_REPOS}; do gh api repos/${REPO}/dispatches --raw-field event_type=build-test-and-push
+        run: for REPO in ${DOWNSTREAM_REPOS}; do gh api repos/${REPO}/dispatches --raw-field event_type=build-test-and-push; done
