@@ -4,8 +4,6 @@ on:
     branches-ignore:
       - main
   workflow_dispatch:
-    types:
-      - build-and-test
 jobs:
   Build-And-Test:
     runs-on: ubuntu-latest
