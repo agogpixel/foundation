@@ -12,7 +12,7 @@ jobs:
     env:
       IMAGE_NAME: agogpixel/foundation
       BAKE_TARGETS: 3-16 3-15 3-14 3-13 3-12 3-11 edge
-      TEST_TAGS: 3-16 3-15 3-14 3-13 3-12 3-11 edge
+      TEST_TAGS: 3.16 3.15 3.14 3.13 3.12 3.11 edge
       DOWNSTREAM_REPOS: agogpixel/foundation-dfromd
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
