@@ -7,10 +7,35 @@ variable "IMAGE_TAG" {
 }
 
 group "default" {
-  targets = ["3.14"]
+  targets = ["3-14"]
 }
 
-target "3.14" {
+target "3-16" {
+  context = "."
+  dockerfile = "Dockerfile"
+  args = {
+    alpine_version = "3.16"
+  }
+  tags = [
+    notequal("",IMAGE_TAG) ? "${IMAGE_NAME}:${IMAGE_TAG}-3.16" : "",
+    "${IMAGE_NAME}:3.16",
+    "${IMAGE_NAME}:latest"
+  ]
+}
+
+target "3-15" {
+  context = "."
+  dockerfile = "Dockerfile"
+  args = {
+    alpine_version = "3.15"
+  }
+  tags = [
+    notequal("",IMAGE_TAG) ? "${IMAGE_NAME}:${IMAGE_TAG}-3.15" : "",
+    "${IMAGE_NAME}:3.15"
+  ]
+}
+
+target "3-14" {
   context = "."
   dockerfile = "Dockerfile"
   args = {
@@ -18,12 +43,11 @@ target "3.14" {
   }
   tags = [
     notequal("",IMAGE_TAG) ? "${IMAGE_NAME}:${IMAGE_TAG}-3.14" : "",
-    "${IMAGE_NAME}:3.14",
-    "${IMAGE_NAME}:latest"
+    "${IMAGE_NAME}:3.14"
   ]
 }
 
-target "3.13" {
+target "3-13" {
   context = "."
   dockerfile = "Dockerfile"
   args = {
@@ -35,7 +59,7 @@ target "3.13" {
   ]
 }
 
-target "3.12" {
+target "3-12" {
   context = "."
   dockerfile = "Dockerfile"
   args = {
@@ -47,7 +71,7 @@ target "3.12" {
   ]
 }
 
-target "3.11" {
+target "3-11" {
   context = "."
   dockerfile = "Dockerfile"
   args = {
